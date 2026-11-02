@@ -1,0 +1,31 @@
+# Dependencies and builds
+node_modules/
+target/
+dist/
+build/
+out-tsc/
+.angular/
+coverage/
+
+# Local environment
+.env
+.env.*
+!.env.example
+*.log
+
+# Editors
+.vscode/
+.idea/
+*.iml
+.cursor/
+
+# AI tools
+.aider*
+.claude*
+
+# System
+.DS_Store
+Thumbs.db
+
+# Documentos de la entrega, van en el PDF
+docs/
