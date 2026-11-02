@@ -1,0 +1,38 @@
+{
+  "ipcPorcentaje": 5.1,
+  "polizas": [
+    { "tipo": "INDIVIDUAL", "tomador": "Ana Gomez", "beneficiario": "Carlos Ruiz", "mesesVigencia": 12, "canon": 1500000, "venceEnDias": 30,
+      "riesgos": [{ "arrendatario": "Ana Gomez", "direccionInmueble": "Calle 10 # 20-30" }] },
+    { "tipo": "COLECTIVA", "tomador": "Inmobiliaria Andes", "beneficiario": "Propietarios Andes", "mesesVigencia": 6, "canon": 2000000, "venceEnDias": 30,
+      "riesgos": [
+        { "arrendatario": "Luis Perez", "direccionInmueble": "Carrera 7 # 45-10 Apto 301" },
+        { "arrendatario": "Marta Diaz", "direccionInmueble": "Carrera 7 # 45-10 Apto 302" }
+      ] },
+    { "tipo": "INDIVIDUAL", "tomador": "Julian Torres", "beneficiario": "Elena Vargas", "mesesVigencia": 12, "canon": 980000, "venceEnDias": 15,
+      "riesgos": [{ "arrendatario": "Julian Torres", "direccionInmueble": "Calle 53 # 14-22 Apto 204" }] },
+    { "tipo": "INDIVIDUAL", "tomador": "Paula Rincon", "beneficiario": "Hernan Castro", "mesesVigencia": 12, "canon": 1250000, "venceEnDias": 200,
+      "riesgos": [{ "arrendatario": "Paula Rincon", "direccionInmueble": "Avenida 19 # 104-37 Apto 502" }] },
+    { "tipo": "COLECTIVA", "tomador": "Arriendos del Norte", "beneficiario": "Fideicomiso Norte", "mesesVigencia": 12, "canon": 3200000, "venceEnDias": 45,
+      "riesgos": [
+        { "arrendatario": "Camilo Duarte", "direccionInmueble": "Calle 127 # 15-40 Apto 101" },
+        { "arrendatario": "Sandra Leon", "direccionInmueble": "Calle 127 # 15-40 Apto 102" },
+        { "arrendatario": "Oscar Pineda", "direccionInmueble": "Calle 127 # 15-40 Apto 201" }
+      ] },
+    { "tipo": "INDIVIDUAL", "tomador": "Diana Mora", "beneficiario": "Ricardo Silva", "mesesVigencia": 6, "canon": 850000, "venceEnDias": 90,
+      "riesgos": [{ "arrendatario": "Diana Mora", "direccionInmueble": "Carrera 30 # 8-15" }] },
+    { "tipo": "COLECTIVA", "tomador": "Gestion Urbana", "beneficiario": "Propietarios Centro", "mesesVigencia": 24, "canon": 4100000, "venceEnDias": 400,
+      "riesgos": [
+        { "arrendatario": "Felipe Ortiz", "direccionInmueble": "Calle 19 # 5-60 Local 1" },
+        { "arrendatario": "Natalia Rios", "direccionInmueble": "Calle 19 # 5-60 Local 2" }
+      ] },
+    { "tipo": "INDIVIDUAL", "tomador": "Mateo Herrera", "beneficiario": "Gloria Pardo", "mesesVigencia": 12, "canon": 1100000, "venceEnDias": 55,
+      "riesgos": [{ "arrendatario": "Mateo Herrera", "direccionInmueble": "Carrera 68 # 24-11 Apto 803" }] },
+    { "tipo": "INDIVIDUAL", "tomador": "Laura Medina", "beneficiario": "Andres Rojas", "mesesVigencia": 12, "canon": 1400000, "venceEnDias": 120, "cancelada": true,
+      "riesgos": [{ "arrendatario": "Laura Medina", "direccionInmueble": "Calle 72 # 11-08 Apto 301" }] },
+    { "tipo": "COLECTIVA", "tomador": "Inversiones Sabana", "beneficiario": "Fondo Sabana", "mesesVigencia": 12, "canon": 2750000, "venceEnDias": 150, "cancelada": true,
+      "riesgos": [
+        { "arrendatario": "Tomas Reyes", "direccionInmueble": "Avenida Suba # 116-20 Casa 4" },
+        { "arrendatario": "Carolina Gil", "direccionInmueble": "Avenida Suba # 116-20 Casa 5" }
+      ] }
+  ]
+}

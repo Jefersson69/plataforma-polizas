@@ -1,0 +1,736 @@
+{
+  "info": {
+    "name": "API de polizas",
+    "description": "Corre en orden contra una API recien arrancada, porque cada peticion parte de lo que dejo la anterior.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "apiKey",
+      "value": "123456"
+    }
+  ],
+  "item": [
+    {
+      "name": "Seguridad",
+      "item": [
+        {
+          "name": "Sin clave",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/polizas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Polizas",
+      "item": [
+        {
+          "name": "Listar todas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Trae las 10 de ejemplo\", () => pm.expect(pm.response.json().length).to.eql(10));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar individuales activas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Solo individuales activas\", () => pm.response.json().forEach((p) => { pm.expect(p.tipo).to.eql(\"INDIVIDUAL\"); pm.expect(p.estado).to.eql(\"ACTIVA\"); }));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas?tipo=INDIVIDUAL&estado=ACTIVA",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "INDIVIDUAL"
+                },
+                {
+                  "key": "estado",
+                  "value": "ACTIVA"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtro invalido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas?tipo=OTRO",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "OTRO"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Renovar poliza 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Aplica el IPC al canon\", () => { pm.expect(pm.response.json().estado).to.eql(\"RENOVADA\"); pm.expect(pm.response.json().canon).to.eql(1576500); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/1/renovar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "1",
+                "renovar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Renovar otra vez",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/1/renovar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "1",
+                "renovar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Renovar fuera de la ventana",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/4/renovar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "4",
+                "renovar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Poliza que no existe",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/999/renovar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "999",
+                "renovar"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Riesgos",
+      "item": [
+        {
+          "name": "Listar riesgos de colectiva",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Trae sus 2 riesgos\", () => pm.expect(pm.response.json().length).to.eql(2));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/2/riesgos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "2",
+                "riesgos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Agregar riesgo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/2/riesgos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "2",
+                "riesgos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"arrendatario\": \"Pedro Rojas\",\n  \"direccionInmueble\": \"Carrera 7 # 45-10 Apto 303\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Agregar riesgo sin datos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/2/riesgos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "2",
+                "riesgos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"arrendatario\": \"\",\n  \"direccionInmueble\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Agregar riesgo a individual",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/1/riesgos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "1",
+                "riesgos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"arrendatario\": \"Pedro Rojas\",\n  \"direccionInmueble\": \"Apto 303\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cancelar riesgo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Queda cancelado\", () => pm.expect(pm.response.json().estado).to.eql(\"CANCELADO\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/riesgos/2/cancelar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "riesgos",
+                "2",
+                "cancelar"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cancelacion",
+      "item": [
+        {
+          "name": "Cancelar poliza",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Queda cancelada\", () => pm.expect(pm.response.json().estado).to.eql(\"CANCELADA\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/2/cancelar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "2",
+                "cancelar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Sus riesgos quedan cancelados",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Todos cancelados\", () => pm.response.json().forEach((r) => pm.expect(r.estado).to.eql(\"CANCELADO\")));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/2/riesgos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "2",
+                "riesgos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Renovar poliza cancelada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/polizas/2/renovar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "polizas",
+                "2",
+                "renovar"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "CORE e IPC",
+      "item": [
+        {
+          "name": "Mock del CORE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 202\", () => pm.response.to.have.status(202));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/core-mock/evento",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "core-mock",
+                "evento"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"evento\": \"ACTUALIZACION\",\n  \"polizaId\": 555\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar IPC",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ipc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ipc"
+              ]
+            }
+          }
+        },
+        {
+          "name": "IPC fuera de rango",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Responde 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ipc/2025",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ipc",
+                "2025"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"porcentaje\": 500\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
