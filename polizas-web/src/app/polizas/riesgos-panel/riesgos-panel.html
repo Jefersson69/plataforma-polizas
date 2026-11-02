@@ -1,0 +1,117 @@
+<section
+  class="mt-6 block scroll-mt-4 rounded-lg border border-slate-200 bg-white p-4 md:p-5"
+  aria-labelledby="titulo-riesgos"
+>
+  <h2 id="titulo-riesgos" class="mb-4 text-lg font-bold">Riesgos de la póliza {{ poliza().id }}</h2>
+
+  @if (error()) {
+    <p [class]="estilos.alertaError" role="alert">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="p-6 text-center text-slate-500">Cargando riesgos…</p>
+  } @else {
+    <div class="relative overflow-x-auto">
+      <table class="block w-full border-collapse md:table">
+        <thead class="sr-only md:not-sr-only md:table-header-group">
+          <tr class="border-b border-slate-200">
+            <th scope="col" [class]="estilos.encabezadoColumna">Arrendatario</th>
+            <th scope="col" [class]="estilos.encabezadoColumna">Inmueble</th>
+            <th scope="col" [class]="estilos.encabezadoColumna">Estado</th>
+            @if (editable()) {
+              <th scope="col" [class]="estilos.encabezadoColumna">
+                <span class="sr-only">Acciones</span>
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody class="block md:table-row-group">
+          @for (riesgo of riesgos(); track riesgo.id) {
+            <tr class="block border-b border-slate-200 py-2 last:border-b-0 md:table-row">
+              <td data-titulo="Arrendatario" [class]="estilos.celdaRiesgo">
+                {{ riesgo.arrendatario }}
+              </td>
+              <td data-titulo="Inmueble" [class]="estilos.celdaRiesgo">
+                {{ riesgo.direccionInmueble }}
+              </td>
+              <td data-titulo="Estado" [class]="estilos.celdaRiesgo">
+                <span [class]="estilos.etiqueta[riesgo.estado]">{{ riesgo.estado }}</span>
+              </td>
+              @if (editable()) {
+                <td
+                  class="block pt-2 empty:hidden md:table-cell md:p-3 md:text-right md:empty:table-cell"
+                >
+                  @if (riesgo.estado === 'ACTIVO') {
+                    <button
+                      type="button"
+                      [class]="estilos.botonPeligro + ' min-h-11 w-full md:min-h-0 md:w-auto'"
+                      (click)="cancelar(riesgo)"
+                    >
+                      Cancelar
+                    </button>
+                  }
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr class="block md:table-row">
+              <td class="block p-6 text-center text-slate-500 md:table-cell" colspan="4">
+                Esta póliza no tiene riesgos.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (editable()) {
+    <form
+      class="mt-6 border-t border-slate-200 pt-5"
+      [formGroup]="formulario"
+      (ngSubmit)="agregar()"
+    >
+      <h3 class="mb-3 font-bold">Agregar riesgo</h3>
+      <div class="grid items-start gap-4 md:grid-cols-[1fr_1fr_auto]">
+        <label class="block font-semibold">
+          Arrendatario
+          <input
+            type="text"
+            formControlName="arrendatario"
+            maxlength="255"
+            autocomplete="off"
+            [class]="estilos.campo"
+          />
+          @if (
+            formulario.controls.arrendatario.touched && formulario.controls.arrendatario.invalid
+          ) {
+            <small class="mt-1 block font-normal text-red-700">Este campo es obligatorio.</small>
+          }
+        </label>
+        <label class="block font-semibold">
+          Dirección del inmueble
+          <input
+            type="text"
+            formControlName="direccionInmueble"
+            maxlength="255"
+            autocomplete="off"
+            [class]="estilos.campo"
+          />
+          @if (
+            formulario.controls.direccionInmueble.touched &&
+            formulario.controls.direccionInmueble.invalid
+          ) {
+            <small class="mt-1 block font-normal text-red-700">Este campo es obligatorio.</small>
+          }
+        </label>
+        <button
+          type="submit"
+          [class]="estilos.botonPrimario + ' min-h-11 md:mt-7 md:min-h-0'"
+          [disabled]="guardando()"
+        >
+          Agregar
+        </button>
+      </div>
+    </form>
+  }
+</section>

@@ -1,0 +1,131 @@
+<header class="bg-slate-800 text-white">
+  <div class="mx-auto max-w-300 p-4 md:p-6">
+    <h1 class="text-xl font-bold md:text-2xl">Gestión de pólizas</h1>
+    <p class="mt-1 opacity-85">Arrendamiento de inmuebles: pólizas individuales y colectivas.</p>
+  </div>
+</header>
+
+<main class="mx-auto max-w-300 p-4 md:p-6">
+  <form class="mb-5 flex flex-wrap gap-4" [formGroup]="filtros" aria-label="Filtros de pólizas">
+    <label class="block min-w-0 flex-1 basis-32 font-semibold md:w-48 md:flex-none">
+      Tipo
+      <select formControlName="tipo" [class]="estilos.campo">
+        <option value="">Todos</option>
+        <option value="INDIVIDUAL">Individual</option>
+        <option value="COLECTIVA">Colectiva</option>
+      </select>
+    </label>
+    <label class="block min-w-0 flex-1 basis-32 font-semibold md:w-48 md:flex-none">
+      Estado
+      <select formControlName="estado" [class]="estilos.campo">
+        <option value="">Todos</option>
+        <option value="ACTIVA">Activa</option>
+        <option value="RENOVADA">Renovada</option>
+        <option value="CANCELADA">Cancelada</option>
+      </select>
+    </label>
+  </form>
+
+  @if (error()) {
+    <p [class]="estilos.alertaError" role="alert">{{ error() }}</p>
+  }
+  @if (exito()) {
+    <p [class]="estilos.alertaExito" role="status">{{ exito() }}</p>
+  }
+
+  <div
+    class="relative overflow-x-auto rounded-lg border border-slate-200 bg-white"
+    [attr.aria-busy]="cargando()"
+  >
+    <table class="block w-full border-collapse xl:table">
+      <thead class="sr-only xl:not-sr-only xl:table-header-group">
+        <tr class="border-b border-slate-200">
+          <th scope="col" [class]="estilos.encabezadoColumna">Póliza</th>
+          <th scope="col" [class]="estilos.encabezadoColumna">Tipo</th>
+          <th scope="col" [class]="estilos.encabezadoColumna">Estado</th>
+          <th scope="col" [class]="estilos.encabezadoColumna">Tomador</th>
+          <th scope="col" [class]="estilos.encabezadoColumna">Vigencia</th>
+          <th scope="col" [class]="estilos.encabezadoColumna + ' xl:text-right'">Canon</th>
+          <th scope="col" [class]="estilos.encabezadoColumna + ' xl:text-right'">Prima</th>
+          <th scope="col" [class]="estilos.encabezadoColumna">
+            <span class="sr-only">Acciones</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="block xl:table-row-group">
+        @for (poliza of polizas(); track poliza.id) {
+          <tr
+            class="block border-b border-slate-200 px-3 py-2 last:border-b-0 md:grid md:grid-cols-4 md:gap-x-4 md:gap-y-3 md:p-4 xl:table-row xl:p-0"
+            [class.bg-blue-50]="poliza.id === seleccionada()?.id"
+          >
+            <td data-titulo="Póliza" [class]="estilos.celdaPoliza">{{ poliza.id }}</td>
+            <td data-titulo="Tipo" [class]="estilos.celdaPoliza">{{ poliza.tipo }}</td>
+            <td data-titulo="Estado" [class]="estilos.celdaPoliza">
+              <span [class]="estilos.etiqueta[poliza.estado]">{{ poliza.estado }}</span>
+            </td>
+            <td data-titulo="Tomador" [class]="estilos.celdaPoliza">{{ poliza.tomador }}</td>
+            <td
+              data-titulo="Vigencia"
+              [class]="estilos.celdaPoliza + ' md:col-span-2 xl:whitespace-nowrap'"
+            >
+              {{ poliza.fechaInicio }} a {{ poliza.fechaFin }}
+            </td>
+            <td
+              data-titulo="Canon"
+              [class]="estilos.celdaPoliza + ' xl:whitespace-nowrap xl:text-right'"
+            >
+              {{ poliza.canon | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+            <td
+              data-titulo="Prima"
+              [class]="estilos.celdaPoliza + ' xl:whitespace-nowrap xl:text-right'"
+            >
+              {{ poliza.prima | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+            </td>
+            <td class="block pt-2.5 md:col-span-4 md:p-0 xl:table-cell xl:p-3">
+              <div class="flex flex-wrap gap-2 md:justify-end xl:flex-nowrap">
+                <button
+                  type="button"
+                  [class]="estilos.boton + ' min-h-11 flex-1 basis-24 md:min-h-0 md:flex-none'"
+                  (click)="verRiesgos(poliza)"
+                >
+                  Ver riesgos
+                </button>
+                @if (poliza.estado !== 'CANCELADA') {
+                  <button
+                    type="button"
+                    [class]="
+                      estilos.botonPrimario + ' min-h-11 flex-1 basis-24 md:min-h-0 md:flex-none'
+                    "
+                    (click)="renovar(poliza)"
+                  >
+                    Renovar
+                  </button>
+                  <button
+                    type="button"
+                    [class]="
+                      estilos.botonPeligro + ' min-h-11 flex-1 basis-24 md:min-h-0 md:flex-none'
+                    "
+                    (click)="cancelar(poliza)"
+                  >
+                    Cancelar
+                  </button>
+                }
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="block xl:table-row">
+            <td class="block p-6 text-center text-slate-500 xl:table-cell" colspan="8">
+              {{ cargando() ? 'Cargando pólizas…' : 'No hay pólizas con estos filtros.' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  @if (seleccionada(); as poliza) {
+    <app-riesgos-panel #panelRiesgos [poliza]="poliza" (cambio)="recargar()" />
+  }
+</main>
